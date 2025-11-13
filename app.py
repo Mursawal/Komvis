@@ -72,7 +72,7 @@ if uploaded_file is not None:
                     cols = st.columns(5)
                     for idx, img_path in enumerate(sample_images):
                         with cols[idx % 5]:
-                            st.image(img_path, width='stretch')
+                            st.image(img_path, width=500)
                 else:
                     st.warning("⚠️ Tidak ada gambar contoh pada folder kelas ini.")
             else:
