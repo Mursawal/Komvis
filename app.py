@@ -67,7 +67,7 @@ if uploaded_file is not None:
 
                 if len(images) > 0:
                     st.write(f"🖼️ Contoh gambar lain dari kelas **{label}**:")
-                    sample_images = random.sample(images, min(10, len(images)))
+                    sample_images = random.sample(images, min(3, len(images)))
 
                     cols = st.columns(5)
                     for idx, img_path in enumerate(sample_images):
