@@ -8,7 +8,7 @@ import random
 # ===============================
 # Judul Aplikasi
 # ===============================
-st.title("🍽️ Klasifikasi Gambar Makanan dengan YOLOv8")
+st.title("🍽️ Sistem Temu Kembali Citra Makanan dengan YOLOv8")
 
 # ===============================
 # Upload Gambar
