@@ -31,8 +31,14 @@ dataset_path = "dataset"  # ubah sesuai lokasi dataset kamu
 # Proses Jika Ada File Diupload
 # ===============================
 if uploaded_file is not None:
-    image = Image.open(uploaded_file)
-    st.image(image, caption="📷 Gambar Asli", use_container_width=True)
+    try:
+        image = Image.open(uploaded_file).convert("RGB")  # pastikan format valid
+        st.image(image, caption="📷 Gambar Asli", use_container_width=True)
+    except Exception as e:
+        st.error(f"Gagal membuka gambar: {e}")
+else:
+    st.info("Silakan upload gambar terlebih dahulu.")
+
 
     # Simpan sementara
     with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as tmp:
