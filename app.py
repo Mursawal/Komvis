@@ -32,7 +32,7 @@ dataset_path = "dataset"  # ubah sesuai lokasi dataset kamu
 if uploaded_file is not None:
     try:
         image = Image.open(uploaded_file).convert("RGB")  # pastikan format valid
-        st.image(image, caption="📷 Gambar Asli", use_container_width=True)
+        st.image(image, caption="📷 Gambar Asli", width='stretch')
 
         # Simpan sementara
         with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as tmp:
@@ -45,7 +45,7 @@ if uploaded_file is not None:
 
         # Gambar hasil prediksi (klasifikasi)
         result_image = results[0].plot()
-        st.image(result_image, caption="🧠 Hasil Prediksi Model", use_container_width=True)
+        st.image(result_image, caption="🧠 Hasil Prediksi Model", width='stretch')
 
         # ===============================
         # Ambil Label Prediksi
@@ -72,7 +72,7 @@ if uploaded_file is not None:
                     cols = st.columns(5)
                     for idx, img_path in enumerate(sample_images):
                         with cols[idx % 5]:
-                            st.image(img_path, use_container_width=True)
+                            st.image(img_path, width='stretch')
                 else:
                     st.warning("⚠️ Tidak ada gambar contoh pada folder kelas ini.")
             else:
