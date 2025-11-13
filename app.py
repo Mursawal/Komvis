@@ -32,7 +32,7 @@ dataset_path = "dataset"  # ubah sesuai lokasi dataset kamu
 if uploaded_file is not None:
     try:
         image = Image.open(uploaded_file).convert("RGB")  # pastikan format valid
-        st.image(image, caption="📷 Gambar Asli", width='stretch')
+        st.image(image, caption="📷 Gambar Asli", width=500)
 
         # Simpan sementara
         with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as tmp:
@@ -45,7 +45,7 @@ if uploaded_file is not None:
 
         # Gambar hasil prediksi (klasifikasi)
         result_image = results[0].plot()
-        st.image(result_image, caption="🧠 Hasil Prediksi Model", width='stretch')
+        st.image(result_image, caption="🧠 Hasil Prediksi Model", width=500)
 
         # ===============================
         # Ambil Label Prediksi
