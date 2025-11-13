@@ -67,12 +67,16 @@ if uploaded_file is not None:
 
                 if len(images) > 0:
                     st.write(f"🖼️ Contoh gambar lain dari kelas **{label}**:")
-                    sample_images = random.sample(images, min(3, len(images)))
+                    sample_images = random.sample(images, min(5, len(images)))
 
-                    cols = st.columns(5)
-                    for idx, img_path in enumerate(sample_images):
-                        with cols[idx % 5]:
-                            st.image(img_path, width=500)
+                num_cols = 5
+                rows = [sample_images[i:i + num_cols] for i in range(0, len(sample_images), num_cols)]
+                
+                for row in rows:
+                    cols = st.columns(len(row))
+                    for col, img_path in zip(cols, row):
+                        col.image(img_path, use_column_width=True)
+
                 else:
                     st.warning("⚠️ Tidak ada gambar contoh pada folder kelas ini.")
             else:
