@@ -4,7 +4,6 @@ from PIL import Image
 import tempfile
 import os
 import random
-import matplotlib.pyplot as plt
 
 # ===============================
 # Judul Aplikasi
@@ -34,58 +33,55 @@ if uploaded_file is not None:
     try:
         image = Image.open(uploaded_file).convert("RGB")  # pastikan format valid
         st.image(image, caption="📷 Gambar Asli", use_container_width=True)
-    except Exception as e:
-        st.error(f"Gagal membuka gambar: {e}")
-else:
-    st.info("Silakan upload gambar terlebih dahulu.")
 
+        # Simpan sementara
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as tmp:
+            image_path = tmp.name
+            image.save(image_path)
 
-    # Simpan sementara
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as tmp:
-        image_path = tmp.name
-        image.save(image_path)
+        # Jalankan prediksi
+        st.write("⏳ Sedang memproses gambar...")
+        results = model(image_path)
 
-    # Jalankan prediksi
-    st.write("⏳ Sedang memproses gambar...")
-    results = model(image_path)
-
-    # Gambar hasil prediksi (klasifikasi)
-    result_image = results[0].plot()
-    st.image(result_image, caption="🧠 Hasil Prediksi Model", use_container_width=True)
-
-    # ===============================
-    # Ambil Label Prediksi
-    # ===============================
-    if hasattr(results[0], "probs") and results[0].probs is not None:
-        probs = results[0].probs.data.cpu().numpy()
-        top_index = probs.argmax()
-        label = model.names[top_index]
-        conf = probs[top_index]
-        st.subheader(f"📋 Hasil Prediksi: **{label} ({conf:.2f})**")
+        # Gambar hasil prediksi (klasifikasi)
+        result_image = results[0].plot()
+        st.image(result_image, caption="🧠 Hasil Prediksi Model", use_container_width=True)
 
         # ===============================
-        # Tampilkan 10 Gambar dari Dataset Kelas yang Sama
+        # Ambil Label Prediksi
         # ===============================
-        class_folder = os.path.join(dataset_path, label)
-        if os.path.exists(class_folder):
-            images = [os.path.join(class_folder, f) for f in os.listdir(class_folder)
-                      if f.lower().endswith((".jpg", ".jpeg", ".png"))]
+        if hasattr(results[0], "probs") and results[0].probs is not None:
+            probs = results[0].probs.data.cpu().numpy()
+            top_index = probs.argmax()
+            label = model.names[top_index]
+            conf = probs[top_index]
+            st.subheader(f"📋 Hasil Prediksi: **{label} ({conf:.2f})**")
 
-            if len(images) > 0:
-                st.write(f"🖼️ Contoh gambar lain dari kelas **{label}**:")
-                sample_images = random.sample(images, min(10, len(images)))
+            # ===============================
+            # Tampilkan 10 Gambar dari Dataset Kelas yang Sama
+            # ===============================
+            class_folder = os.path.join(dataset_path, label)
+            if os.path.exists(class_folder):
+                images = [os.path.join(class_folder, f) for f in os.listdir(class_folder)
+                          if f.lower().endswith((".jpg", ".jpeg", ".png"))]
 
-                cols = st.columns(5)
-                for idx, img_path in enumerate(sample_images):
-                    with cols[idx % 5]:
-                        st.image(img_path, use_container_width=True)
+                if len(images) > 0:
+                    st.write(f"🖼️ Contoh gambar lain dari kelas **{label}**:")
+                    sample_images = random.sample(images, min(10, len(images)))
+
+                    cols = st.columns(5)
+                    for idx, img_path in enumerate(sample_images):
+                        with cols[idx % 5]:
+                            st.image(img_path, use_container_width=True)
+                else:
+                    st.warning("⚠️ Tidak ada gambar contoh pada folder kelas ini.")
             else:
-                st.warning("⚠️ Tidak ada gambar contoh pada folder kelas ini.")
+                st.error(f"❌ Folder kelas '{label}' tidak ditemukan di {dataset_path}")
         else:
-            st.error(f"❌ Folder kelas '{label}' tidak ditemukan di {dataset_path}")
+            st.error("❌ Model tidak menghasilkan probabilitas (kemungkinan model deteksi, bukan klasifikasi).")
 
-    else:
-        st.error("❌ Model tidak menghasilkan probabilitas (kemungkinan model deteksi, bukan klasifikasi).")
+    except Exception as e:
+        st.error(f"Gagal membuka atau memproses gambar: {e}")
 
 else:
     st.info("⬆️ Silakan upload gambar terlebih dahulu untuk mulai klasifikasi.")
